@@ -1,0 +1,134 @@
+// Binary Addition Algorithm with two tapes Turing Machine
+// Gonzalo Gabriel Fernandez
+// Input: a+b (where a and b are binary numbers)
+// Ouput: c (where c = a + b) in tape #2
+// Example: 1011#10 outputs 1101
+
+name: Binary addition with two tapes
+init: qScanA
+accept: qEnd
+
+// Scan first binary number and switch to qScanB
+qScanA,0,_
+qScanA,0,_,>,-
+
+qScanA,1,_
+qScanA,1,_,>,-
+
+qScanA,+,_
+qScanB,_,_,>,-
+
+// Scan second binary number while writing it on tape #2
+// Then, switch to tape #1 rewind left
+qScanB,0,_
+qScanB,_,0,>,>
+
+qScanB,1,_
+qScanB,_,1,>,>
+
+qScanB,_,_
+qRewindLeft1,_,_,<,<
+
+// Rewind tape #1 and then switch to addition
+qRewindLeft1,_,0
+qRewindLeft1,_,0,<,-
+
+qRewindLeft1,_,1
+qRewindLeft1,_,1,<,-
+
+qRewindLeft1,0,0
+qAdd,0,0,-,-
+
+qRewindLeft1,0,1
+qAdd,0,1,-,-
+
+qRewindLeft1,1,0
+qAdd,1,0,-,-
+
+qRewindLeft1,1,1
+qAdd,1,1,-,-
+
+// Add binary digits and switch to:
+// Do carry if 1 and 1
+qAdd,0,0
+qAdd,_,0,<,<
+
+qAdd,0,1
+qAdd,_,1,<,<
+
+qAdd,1,0
+qAdd,_,1,<,<
+
+qAdd,1,1
+qCarry,0,0,<,<
+
+qAdd,1,_
+qAdd,_,1,<,<
+
+qAdd,0,_
+qAdd,_,0,<,<
+
+qAdd,_,_
+qEnd,_,_,-,-
+
+qAdd,_,1
+qEnd,_,1,-,-
+
+qAdd,_,0
+qEnd,_,0,-,-
+
+// Perform carry and rewind tape #1 right
+qCarry,1,_
+qCarry,0,_,<,-
+
+qCarry,1,0
+qCarry,0,0,<,-
+
+qCarry,1,1
+qCarry,0,1,<,-
+
+qCarry,0,_
+qRewindRight1,1,_,>,-
+
+qCarry,0,0
+qRewindRight1,1,0,>,-
+
+qCarry,0,1
+qRewindRight1,1,1,>,-
+
+qCarry,_,_
+qRewindRight1,1,_,>,-
+
+qCarry,_,0
+qRewindRight1,1,0,>,-
+
+qCarry,_,1
+qRewindRight1,1,1,>,-
+
+// Rewind tape #1 to the right and back to add digits
+qRewindRight1,0,_
+qRewindRight1,0,_,>,-
+
+qRewindRight1,0,0
+qRewindRight1,0,0,>,-
+
+qRewindRight1,0,1
+qRewindRight1,0,1,>,-
+
+qRewindRight1,1,_
+qRewindRight1,1,_,>,-
+
+qRewindRight1,1,0
+qRewindRight1,1,0,>,-
+
+qRewindRight1,1,1
+qRewindRight1,1,1,>,-
+
+qRewindRight1,_,_
+qAdd,_,_,<,>
+
+qRewindRight1,_,0
+qAdd,_,0,<,>
+
+qRewindRight1,_,1
+qAdd,_,1,<,>
