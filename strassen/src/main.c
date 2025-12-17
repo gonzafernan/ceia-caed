@@ -29,15 +29,27 @@ int main(int argc, char *argv[]) {
     return -1;
   }
   for (size_t i = 0; i < n; i++) {
-    if (imatrix_set_value(mat_a, i, i, 2) < 0) {
-      free_matrices();
-      return -1;
-    }
-    if (imatrix_set_value(mat_b, i, i, 3) < 0) {
-      free_matrices();
-      return -1;
+    for (size_t j = 0; j < n; j++) {
+      if (imatrix_set_value(mat_a, i, j, rand() % 9) < 0) {
+        free_matrices();
+        return -1;
+      }
+      if (imatrix_set_value(mat_b, i, j, rand() % 9) < 0) {
+        free_matrices();
+        return -1;
+      }
     }
   }
+  // for (size_t i = 0; i < n; i++) {
+  //   if (imatrix_set_value(mat_a, i, i, rand() % 9) < 0) {
+  //     free_matrices();
+  //     return -1;
+  //   }
+  //   if (imatrix_set_value(mat_b, i, i, rand() % 9) < 0) {
+  //     free_matrices();
+  //     return -1;
+  //   }
+  // }
   printf("A =\r\n%s\r\n", imatrix_dump(mat_a));
   printf("B =\r\n%s\r\n", imatrix_dump(mat_b));
   mat_c = imatrix_multiply_recursive(mat_a, mat_b);
