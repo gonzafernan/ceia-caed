@@ -486,34 +486,90 @@ void imatrix_view_multiply_strassen(const imatrix_view_t A,
   imatrix_free(P7);
 }
 
+size_t next_power2(size_t n) {
+  if (n <= 1)
+    return 1;
+
+  n--;
+  n |= n >> 1;
+  n |= n >> 2;
+  n |= n >> 4;
+  n |= n >> 8;
+  n |= n >> 16;
+  return n + 1;
+}
+
+imatrix_t *imatrix_pad_to_p(const imatrix_t *src, size_t p) {
+  if (!src || src->rows != src->cols)
+    return NULL;
+
+  size_t n = src->rows;
+
+  imatrix_t *dst = imatrix_new(p, p);
+  if (!dst)
+    return NULL;
+
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      dst->data[i * p + j] = src->data[i * n + j];
+    }
+  }
+
+  return dst;
+}
+
+imatrix_t *imatrix_top_left(const imatrix_t *src, size_t n) {
+  if (!src || n > src->rows || n > src->cols)
+    return NULL;
+
+  imatrix_t *dst = imatrix_new(n, n);
+  if (!dst)
+    return NULL;
+
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      dst->data[i * n + j] = src->data[i * src->cols + j];
+    }
+  }
+
+  return dst;
+}
+
 imatrix_t *imatrix_multiply_recursive(imatrix_t *mat_a, imatrix_t *mat_b) {
   size_t n = mat_a->rows;
-  imatrix_view_t mat_view_a = {.parent_rows_size = n,
-                               .parent_cols_size = n,
-                               .data = mat_a->data,
+  size_t n2 = next_power2(n);
+  imatrix_t *mat_a_tmp = imatrix_pad_to_p(mat_a, n2);
+  imatrix_t *mat_b_tmp = imatrix_pad_to_p(mat_b, n2);
+  imatrix_view_t mat_view_a = {.parent_rows_size = n2,
+                               .parent_cols_size = n2,
+                               .data = mat_a_tmp->data,
                                .view_rows_offset = 0,
                                .view_cols_offset = 0,
-                               .view_rows_size = n,
-                               .view_cols_size = n,
+                               .view_rows_size = n2,
+                               .view_cols_size = n2,
                                .pad = 1};
-  imatrix_view_t mat_view_b = {.parent_rows_size = n,
-                               .parent_cols_size = n,
-                               .data = mat_b->data,
+  imatrix_view_t mat_view_b = {.parent_rows_size = n2,
+                               .parent_cols_size = n2,
+                               .data = mat_b_tmp->data,
                                .view_rows_offset = 0,
                                .view_cols_offset = 0,
-                               .view_rows_size = n,
-                               .view_cols_size = n,
+                               .view_rows_size = n2,
+                               .view_cols_size = n2,
                                .pad = 1};
 
-  imatrix_t *mat_c = imatrix_new(n, n);
-  imatrix_view_t mat_view_c = {.parent_rows_size = n,
-                               .parent_cols_size = n,
-                               .data = mat_c->data,
+  imatrix_t *mat_c_tmp = imatrix_new(n2, n2);
+  imatrix_view_t mat_view_c = {.parent_rows_size = n2,
+                               .parent_cols_size = n2,
+                               .data = mat_c_tmp->data,
                                .view_rows_offset = 0,
                                .view_cols_offset = 0,
-                               .view_rows_size = n,
-                               .view_cols_size = n,
+                               .view_rows_size = n2,
+                               .view_cols_size = n2,
                                .pad = 1};
   imatrix_view_multiply_strassen(mat_view_a, mat_view_b, mat_view_c);
+  imatrix_t *mat_c = imatrix_top_left(mat_c_tmp, n);
+  imatrix_free(mat_a_tmp);
+  imatrix_free(mat_b_tmp);
+  imatrix_free(mat_c_tmp);
   return mat_c;
 }
