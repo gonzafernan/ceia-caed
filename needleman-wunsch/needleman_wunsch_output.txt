@@ -1,0 +1,34 @@
+Alignment for GATTACA and GCATGCU:
+Score Matrix:
+ [[  0  -2  -4  -6  -8 -10 -12 -14]
+ [ -2   1  -1  -3  -5  -7  -9 -11]
+ [ -4  -1   0   0  -2  -4  -6  -8]
+ [ -6  -3  -2  -1   1  -1  -3  -5]
+ [ -8  -5  -4  -3   0   0  -2  -4]
+ [-10  -7  -6  -3  -2  -1  -1  -3]
+ [-12  -9  -6  -5  -4  -3   0  -2]
+ [-14 -11  -8  -5  -6  -5  -2  -1]]
+Optimal global alignments:
+#0: ('GATTACA', 'GCATGCU')
+Final score: -1
+Alignment for ACGT and ACCT:
+Score Matrix:
+ [[ 0 -2 -4 -6 -8]
+ [-2  1 -1 -3 -5]
+ [-4 -1  2  0 -2]
+ [-6 -3  0  1 -1]
+ [-8 -5 -2 -1  2]]
+Optimal global alignments:
+#0: ('ACGT', 'ACCT')
+Final score: 2
+Alignment for ATGCT and AGCT:
+Score Matrix:
+ [[  0  -2  -4  -6  -8]
+ [ -2   1  -1  -3  -5]
+ [ -4  -1   0  -2  -2]
+ [ -6  -3   0  -1  -3]
+ [ -8  -5  -2   1  -1]
+ [-10  -7  -4  -1   2]]
+Optimal global alignments:
+#0: ('A-GCT', 'AAGCT')
+Final score: 2
